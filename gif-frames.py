@@ -7,3 +7,4 @@ with Image.open('1ac.gif') as im:
     for i in range(im.n_frames):
         im.seek(i)
         im.save('imgs/{}.png'.format(i))
+
