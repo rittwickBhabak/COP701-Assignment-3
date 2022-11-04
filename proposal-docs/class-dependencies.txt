@@ -1,0 +1,50 @@
+class EventType(str, enum.Enum):
+
+class Event:
+
+class Variable:
+class StringVar(Variable):
+class IntVar(Variable):
+class DoubleVar(Variable):
+class BooleanVar(Variable):
+
+class Misc:
+class CallWrapper:
+class XView:
+class YView:
+class Wm:
+
+class Tk(Misc, Wm):
+class Pack:
+class Place:
+class Grid:
+
+class BaseWidget(Misc):
+class Widget(BaseWidget, Pack, Place, Grid):
+class Toplevel(BaseWidget, Wm):
+
+class Button(Widget):
+class Canvas(Widget, XView, YView):
+class Checkbutton(Widget):
+class Entry(Widget, XView):
+class Frame(Widget):
+class Label(Widget):
+class Listbox(Widget, XView, YView):
+class Menu(Widget):
+class Menubutton(Widget):
+class Message(Widget):
+class Radiobutton(Widget):
+class Scale(Widget):
+class Scrollbar(Widget):
+class Text(Widget, XView, YView):
+
+class _setit:
+
+class OptionMenu(Menubutton):
+class Image:
+class PhotoImage(Image):
+class BitmapImage(Image):
+class Spinbox(Widget, XView):
+
+class LabelFrame(Widget):
+class PanedWindow(Widget):
