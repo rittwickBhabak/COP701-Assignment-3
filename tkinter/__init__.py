@@ -265,6 +265,7 @@ class Event:
 
 _support_default_root = 1
 _default_root = None
+gif_threads = [] 
 
 def NoDefaultRoot():
     """Inhibit setting of default root window.
@@ -1286,6 +1287,9 @@ class Misc:
         self.tk.mainloop(n)
     def quit(self):
         """Quit the Tcl interpreter. All widgets will be destroyed."""
+        for gif in gif_threads:
+            gif.stop_threads = True 
+            print('stopped')
         self.tk.quit()
     def _getints(self, string):
         """Internal function."""
@@ -2013,10 +2017,6 @@ class Tk(Misc, Wm):
         self.master = None
         self.children = {}
         self._tkloaded = 0
-
-        # therads, this must be killed before the root object is killed
-        self.gif_threads = [] # {'mater':therad}
-
         # to avoid recursions in the getattr code in case of failure, we
         # ensure that self.tk is always _something_.
         self.tk = None
@@ -3611,20 +3611,25 @@ class PhotoImage(Image):
             args = args + ('-from',) + tuple(from_coords)
         self.tk.call(args)
 
-class GifImage():
-    def __init__(self, image_path, master):
-        self.image_path = image_path 
-        self.master = master 
+class GifImage(Frame):
+    def __init__(self,  master, image_path, **options):
+        self.image_path = image_path
+        self.master = master
         self.images = []
         self.labels = []
-        
+        self.frame_durations = []
+        self.frame = Frame(self.master)
+        self.frame.pack()
+
         with PILImage.open(self.image_path) as im:
             self.n_frames = im.n_frames
-
             for i in range(self.n_frames):
                 im.seek(i)
                 self.images.append(PhotoImage(data=self._image_to_data(im)))
-                self.labels.append(Label(self.master, image=self.images[i]))
+                self.labels.append(Label(self.frame, image=self.images[i]))
+                self.frame_durations.append(im.info.get('duration'))
+
+        Frame.__init__(self, master, **options)
 
     def __del__(self):
         print('Gif image must be deleted')
@@ -3634,20 +3639,36 @@ class GifImage():
             im.save(output, format="PNG")
             data = output.getvalue()
         return data
-
+    
+    def destroy(self):
+        print('I am called')
+        self.stop_threads = True 
+        print("I am here")
+        time.sleep(1)
+        return super().destroy()
+    
     def show(self):
+        self.stop_threads = False 
         thread = threading.Thread(target=self.run_gif)
         thread.start()
-        
     
     def run_gif(self):
         frame_number = 0
         while True:
-            self.labels[frame_number].pack(side='left')
-            time.sleep(0.02)
-            self.labels[frame_number].pack_forget()
-            frame_number += 1
-            frame_number = frame_number % self.n_frames
+            if not self.stop_threads:
+                self.labels[frame_number].pack(side='left')
+                if self.frame_durations[frame_number] is not None:
+                    time.sleep(float(self.frame_durations[frame_number])/1000)
+                else:
+                    time.sleep(0.02)
+                self.labels[frame_number].pack_forget()
+                frame_number += 1
+                frame_number = frame_number % self.n_frames
+                print(self.stop_threads)
+            else:
+                print('asldkfasldjfaflaj')
+                break
+        print('I am out of loop')
 
 class BitmapImage(Image):
     """Widget which can display images in XBM format."""
