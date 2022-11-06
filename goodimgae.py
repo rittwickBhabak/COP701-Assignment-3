@@ -1,7 +1,7 @@
 from io import BytesIO
 from PIL import Image
-import tkinter as tk
 import threading 
+import tkinter as tk
 
 def image_to_data(im):
     with BytesIO() as output:

@@ -32,6 +32,9 @@ tk.mainloop()
 
 import enum
 import sys
+from io import BytesIO
+from PIL import Image as PILImage
+import threading, time, os
 
 import _tkinter # If this fails your Python may not be configured for Tk
 TclError = _tkinter.TclError
@@ -2010,6 +2013,10 @@ class Tk(Misc, Wm):
         self.master = None
         self.children = {}
         self._tkloaded = 0
+
+        # therads, this must be killed before the root object is killed
+        self.gif_threads = [] # {'mater':therad}
+
         # to avoid recursions in the getattr code in case of failure, we
         # ensure that self.tk is always _something_.
         self.tk = None
@@ -3482,6 +3489,9 @@ class Image:
     """Base class for images."""
     _last_id = 0
     def __init__(self, imgtype, name=None, cnf={}, master=None, **kw):
+        # print(imgtype, name, cnf, master)
+        # print(kw.get('file'))
+
         self.name = None
         if not master:
             master = _default_root
@@ -3601,131 +3611,43 @@ class PhotoImage(Image):
             args = args + ('-from',) + tuple(from_coords)
         self.tk.call(args)
 
-# class GoodImage:
-#     """Base class for images."""
-#     _last_id = 0
-#     def __init__(self, imgtype, name=None, cnf={}, master=None, **kw):
-#         # print(cnf)
-#         # print('--------------')
-#         # print(kw)
-#         self.name = None
-#         if not master:
-#             master = _default_root
-#             if not master:
-#                 raise RuntimeError('Too early to create image')
-#         self.tk = getattr(master, 'tk', master)
-#         if not name:
-#             GoodImage._last_id += 1
-#             name = "pyimage%r" % (GoodImage._last_id,) # tk itself would use image<x>
-#         if kw and cnf: cnf = _cnfmerge((cnf, kw))
-#         elif kw: cnf = kw
-#         options = ()
-#         for k, v in cnf.items():
-#             if callable(v):
-#                 v = self._register(v)
-#             options = options + ('-'+k, v)
-#         self.tk.call(('image', 'create', imgtype, name,) + options)
-#         self.name = name
-#     def __str__(self): return self.name
-#     def __del__(self):
-#         if self.name:
-#             try:
-#                 self.tk.call('image', 'delete', self.name)
-#             except TclError:
-#                 # May happen if the root was destroyed
-#                 pass
-#     def __setitem__(self, key, value):
-#         self.tk.call(self.name, 'configure', '-'+key, value)
-#     def __getitem__(self, key):
-#         return self.tk.call(self.name, 'configure', '-'+key)
-#     def configure(self, **kw):
-#         """Configure the image."""
-#         res = ()
-#         for k, v in _cnfmerge(kw).items():
-#             if v is not None:
-#                 if k[-1] == '_': k = k[:-1]
-#                 if callable(v):
-#                     v = self._register(v)
-#                 res = res + ('-'+k, v)
-#         self.tk.call((self.name, 'config') + res)
-#     config = configure
-#     def height(self):
-#         """Return the height of the image."""
-#         return self.tk.getint(
-#             self.tk.call('image', 'height', self.name))
-#     def type(self):
-#         """Return the type of the image, e.g. "photo" or "bitmap"."""
-#         return self.tk.call('image', 'type', self.name)
-#     def width(self):
-#         """Return the width of the image."""
-#         return self.tk.getint(
-#             self.tk.call('image', 'width', self.name))
+class GifImage():
+    def __init__(self, image_path, master):
+        self.image_path = image_path 
+        self.master = master 
+        self.images = []
+        self.labels = []
+        
+        with PILImage.open(self.image_path) as im:
+            self.n_frames = im.n_frames
 
-# class GoodPhotoImage(GoodImage):
-#     """Widget which can display images in PGM, PPM, GIF, PNG format."""
-#     def __init__(self, name=None, cnf={}, master=None, **kw):
-#         """Create an image with NAME.
+            for i in range(self.n_frames):
+                im.seek(i)
+                self.images.append(PhotoImage(data=self._image_to_data(im)))
+                self.labels.append(Label(self.master, image=self.images[i]))
 
-#         Valid resource names: data, format, file, gamma, height, palette,
-#         width."""
-#         GoodImage.__init__(self, 'photo', name, cnf, master, **kw)
-#     def blank(self):
-#         """Display a transparent image."""
-#         self.tk.call(self.name, 'blank')
-#     def cget(self, option):
-#         """Return the value of OPTION."""
-#         return self.tk.call(self.name, 'cget', '-' + option)
-#     # XXX config
-#     def __getitem__(self, key):
-#         return self.tk.call(self.name, 'cget', '-' + key)
-#     # XXX copy -from, -to, ...?
-#     def copy(self):
-#         """Return a new PhotoImage with the same image as this widget."""
-#         destImage = GoodPhotoImage(master=self.tk)
-#         self.tk.call(destImage, 'copy', self.name)
-#         return destImage
-#     def zoom(self, x, y=''):
-#         """Return a new PhotoImage with the same image as this widget
-#         but zoom it with a factor of x in the X direction and y in the Y
-#         direction.  If y is not given, the default value is the same as x.
-#         """
-#         destImage = GoodPhotoImage(master=self.tk)
-#         if y=='': y=x
-#         self.tk.call(destImage, 'copy', self.name, '-zoom',x,y)
-#         return destImage
-#     def subsample(self, x, y=''):
-#         """Return a new PhotoImage based on the same image as this widget
-#         but use only every Xth or Yth pixel.  If y is not given, the
-#         default value is the same as x.
-#         """
-#         destImage = GoodPhotoImage(master=self.tk)
-#         if y=='': y=x
-#         self.tk.call(destImage, 'copy', self.name, '-subsample',x,y)
-#         return destImage
-#     def get(self, x, y):
-#         """Return the color (red, green, blue) of the pixel at X,Y."""
-#         return self.tk.call(self.name, 'get', x, y)
-#     def put(self, data, to=None):
-#         """Put row formatted colors to image starting from
-#         position TO, e.g. image.put("{red green} {blue yellow}", to=(4,6))"""
-#         args = (self.name, 'put', data)
-#         if to:
-#             if to[0] == '-to':
-#                 to = to[1:]
-#             args = args + ('-to',) + tuple(to)
-#         self.tk.call(args)
-#     # XXX read
-#     def write(self, filename, format=None, from_coords=None):
-#         """Write image to file FILENAME in FORMAT starting from
-#         position FROM_COORDS."""
-#         args = (self.name, 'write', filename)
-#         if format:
-#             args = args + ('-format', format)
-#         if from_coords:
-#             args = args + ('-from',) + tuple(from_coords)
-#         self.tk.call(args)
+    def __del__(self):
+        print('Gif image must be deleted')
 
+    def _image_to_data(self, im):
+        with BytesIO() as output:
+            im.save(output, format="PNG")
+            data = output.getvalue()
+        return data
 
+    def show(self):
+        thread = threading.Thread(target=self.run_gif)
+        thread.start()
+        
+    
+    def run_gif(self):
+        frame_number = 0
+        while True:
+            self.labels[frame_number].pack(side='left')
+            time.sleep(0.02)
+            self.labels[frame_number].pack_forget()
+            frame_number += 1
+            frame_number = frame_number % self.n_frames
 
 class BitmapImage(Image):
     """Widget which can display images in XBM format."""

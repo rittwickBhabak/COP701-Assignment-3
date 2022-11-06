@@ -44,8 +44,9 @@ thread.start()
 
 def click():
     print('See, I am clicked.')
-    
+
 button = tk.Button(text='Click me', command=click)
 button.pack()
 
 root.mainloop()
+
