@@ -24,7 +24,39 @@ class Point():
         return list(map(lambda x: (x-shift)*scale, l))
 
 
+class PointFromFunction(Point):
+    def __init__(self, height, width, eval=None, domain=[]):
+        super().__init__(height, width, eval, domain)
+        self.prepare_field()
+        self.set_points(self.domain, self.co_domain)
 
+    def prepare_field(self):
+        x = self.expand_domain(self.domain)
+        result = self.get_y_values(self.eval, x)
+        
+        self.domain = list(map(lambda x: x[0], result))
+        self.co_domain = list(map(lambda x: x[1], result))
+        self.domain = self.get_scaled_values(self.domain, self.width)
+        self.co_domain = self.get_scaled_values(self.co_domain, self.height)
+
+    def get_y_values(self, eval, x):
+        result = []
+        for i in x:
+            try:
+                result.append((i, eval(i)))
+            except:
+                pass 
+        return result
+
+    def expand_domain(self, domain):
+        x = [] 
+        low = domain[0]
+        high = domain[1] 
+        diff = 0.01
+        while low<=high:
+            x.append(low)
+            low = low + diff 
+        return x 
 
 
 
@@ -45,7 +77,9 @@ class Plot(Frame):
         ty = arg.get('type')
         data = arg.get('data', None)
         # print(height, width, domain)
-        if ty=='scatter':
+        if ty=='func':
+            points = PointFromFunction(self.height, self.width, eval=fn, domain=domain)
+        elif ty=='scatter':
             points = PointFromList(self.height, self.width, data)
 
         for x_, y_ in points.points:
