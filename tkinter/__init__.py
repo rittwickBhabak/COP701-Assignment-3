@@ -2735,6 +2735,7 @@ class Entry(Widget, XView):
 class Frame(Widget):
     """Frame widget which may contain other widgets and can have a 3D border."""
     def __init__(self, master=None, cnf={}, **kw):
+        print(master, cnf, kw)
         """Construct a frame widget with the parent MASTER.
 
         Valid resource names: background, bd, bg, borderwidth, class,
@@ -3613,23 +3614,22 @@ class PhotoImage(Image):
 
 class GifImage(Frame):
     def __init__(self,  master, image_path, **options):
+        Frame.__init__(self, master, **options)
         self.image_path = image_path
         self.master = master
         self.images = []
         self.labels = []
         self.frame_durations = []
-        self.frame = Frame(self.master)
-        self.frame.pack()
+        self.index = 0 
 
         with PILImage.open(self.image_path) as im:
             self.n_frames = im.n_frames
             for i in range(self.n_frames):
                 im.seek(i)
                 self.images.append(PhotoImage(data=self._image_to_data(im)))
-                self.labels.append(Label(self.frame, image=self.images[i]))
+                self.labels.append(Label(self, image=self.images[i]))
                 self.frame_durations.append(im.info.get('duration'))
 
-        Frame.__init__(self, master, **options)
 
     def __del__(self):
         print('Gif image must be deleted')
@@ -3641,16 +3641,14 @@ class GifImage(Frame):
         return data
     
     def destroy(self):
-        print('I am called')
         self.stop_threads = True 
-        print("I am here")
-        time.sleep(1)
         return super().destroy()
     
     def show(self):
         self.stop_threads = False 
         thread = threading.Thread(target=self.run_gif)
         thread.start()
+
     
     def run_gif(self):
         frame_number = 0
@@ -3664,11 +3662,10 @@ class GifImage(Frame):
                 self.labels[frame_number].pack_forget()
                 frame_number += 1
                 frame_number = frame_number % self.n_frames
-                print(self.stop_threads)
+                # print(self.stop_threads)
             else:
-                print('asldkfasldjfaflaj')
-                break
-        print('I am out of loop')
+                break 
+
 
 class BitmapImage(Image):
     """Widget which can display images in XBM format."""
