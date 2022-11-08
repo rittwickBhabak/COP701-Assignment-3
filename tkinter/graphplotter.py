@@ -29,6 +29,31 @@ class Point():
 
 
 
+class Plot(Frame):
+    def __init__(self, master=None, cnf={}, **kw):
+        Frame.__init__(self, master, cnf, **kw)
+        cnf = _cnfmerge((cnf, kw))
+        self.height=cnf.get('height')
+        self.width=cnf.get('width')
+        self.canvas = Canvas(self, height=self.height, width=self.width,  borderwidth=3, relief=GROOVE)
+        self.daig = 0.0011
+        self.canvas.pack()
 
+    def draw(self, arg):
+        domain = arg.get('domain', None)
+        fn = arg.get('fn', None)
+        ty = arg.get('type')
+        data = arg.get('data', None)
+        # print(height, width, domain)
+        if ty=='scatter':
+            points = PointFromList(self.height, self.width, data)
+
+        for x_, y_ in points.points:
+            x0 = x_-self.daig
+            y0 = y_-self.daig
+            x1 = x_+self.daig
+            y1 = y_+self.daig
+            self.canvas.create_oval(x0, y0, x1, y1)
+            self.canvas.update()
 
 
