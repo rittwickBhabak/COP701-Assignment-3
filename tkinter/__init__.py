@@ -2735,7 +2735,6 @@ class Entry(Widget, XView):
 class Frame(Widget):
     """Frame widget which may contain other widgets and can have a 3D border."""
     def __init__(self, master=None, cnf={}, **kw):
-        print(master, cnf, kw)
         """Construct a frame widget with the parent MASTER.
 
         Valid resource names: background, bd, bg, borderwidth, class,
@@ -3131,12 +3130,7 @@ class Text(Widget, XView, YView):
         that any possible out of date information is recalculated."""
         args = ['-%s' % arg for arg in args if not arg.startswith('-')]
         args += [index1, index2]
-        try:
-            if index1==index2:
-                return 0
-        except Exception as e:
-            # print(str(e))
-            pass 
+
         res = self.tk.call(self._w, 'count', *args) or None
         if res is not None and len(args) <= 3:
             return (res, )
@@ -3517,7 +3511,9 @@ class Image:
             if callable(v):
                 v = self._register(v)
             options = options + ('-'+k, v)
+        input('Image created before')
         self.tk.call(('image', 'create', imgtype, name,) + options)
+        print('Image created after')
         self.name = name
     def __str__(self): return self.name
     def __del__(self):
@@ -3637,8 +3633,7 @@ class GifImage(Frame):
                 self.frame_durations.append(im.info.get('duration'))
 
 
-    def __del__(self):
-        print('Gif image must be deleted')
+
 
     def _image_to_data(self, im):
         with BytesIO() as output:
