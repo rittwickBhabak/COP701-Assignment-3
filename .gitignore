@@ -2,3 +2,7 @@ env/
 temp/
 .vscode/
 __pycache__/
+tk8.6.12/
+tk8.6.12/*
+tcl8.6.12/
+tcl8.6.12/*

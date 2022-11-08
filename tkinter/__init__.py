@@ -3131,6 +3131,12 @@ class Text(Widget, XView, YView):
         that any possible out of date information is recalculated."""
         args = ['-%s' % arg for arg in args if not arg.startswith('-')]
         args += [index1, index2]
+        try:
+            if index1==index2:
+                return 0
+        except Exception as e:
+            # print(str(e))
+            pass 
         res = self.tk.call(self._w, 'count', *args) or None
         if res is not None and len(args) <= 3:
             return (res, )
