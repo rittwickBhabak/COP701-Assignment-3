@@ -24,6 +24,15 @@ class Point():
         return list(map(lambda x: (x-shift)*scale, l))
 
 
+class PointFromList(Point):
+    def __init__(self, height, width, data):
+        super().__init__(height, width)
+        domain = list(map(lambda x: x[0], data))    
+        co_domain = list(map(lambda x: x[1], data))
+        self.domain = self.get_scaled_values(domain, width)
+        self.co_domain = self.get_scaled_values(co_domain, height)
+        self.set_points(self.domain, self.co_domain)
+
 class PointFromFunction(Point):
     def __init__(self, height, width, eval=None, domain=[]):
         super().__init__(height, width, eval, domain)
