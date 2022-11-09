@@ -19,7 +19,7 @@ class Point():
             eval (fucntion, optional): The function using which the points will be plotted. Defaults to None.
             domain (list, optional): Domain of the function. Defaults to None.
         """
-        
+
         self.height = height 
         self.width = width 
         self.eval = eval 
@@ -47,8 +47,8 @@ class Point():
         and width.
 
         Args:
-            l (list): list of integers
-            max_value (int): The maximum value of the list l
+            l (list): list of floats
+            max_value (float): The maximum value of the list l
 
         Returns:
             list: list of integers after applying scaling 
@@ -73,6 +73,14 @@ class PointFromList(Point):
     """
 
     def __init__(self, height, width, data):
+        """Constructor of the PointFromList class
+
+        Args:
+            height (int): Height of the rectangle
+            width (int): Width of the rectangle
+            data (list): list of points of the type (x, y)
+        """
+
         super().__init__(height, width)
         domain = list(map(lambda x: x[0], data))    
         co_domain = list(map(lambda x: x[1], data))
@@ -81,12 +89,39 @@ class PointFromList(Point):
         self.set_points(self.domain, self.co_domain)
 
 class PointFromFunction(Point):
+    """The class generates a list of points from the given function.
+
+    This class generates a list of points from the given function and
+    the given range. The poitns will be aslo scaled down/up such that
+    all of them fits to the rectangle of the given width and height.
+
+    """
+
     def __init__(self, height, width, eval=None, domain=[]):
+        """Constructor of the class PointFromFunction
+
+        The class iterates through all of the x values within a gap
+        of 0.01 and generates the corresponding y values. and then
+        scales up/down the pairs (x, y) such that all of the points
+        fits into the rectangle with the given width and height.
+
+        Args:
+            height (int): The height of the rectangle
+            width (int): The width of the graph
+            eval (function, optional): The evaluator. Defaults to None.
+            domain (list, optional): [a, b] The domain of the evaluator. Defaults to [].
+        """
+
         super().__init__(height, width, eval, domain)
         self.prepare_field()
         self.set_points(self.domain, self.co_domain)
 
     def prepare_field(self):
+        """From the given evaluator and given domain get the 
+        x and y values and then scale them up/down so that they
+        fits into the rectangle of the given width and the height.
+        """
+
         x = self.expand_domain(self.domain)
         result = self.get_y_values(self.eval, x)
         
@@ -96,6 +131,16 @@ class PointFromFunction(Point):
         self.co_domain = self.get_scaled_values(self.co_domain, self.height)
 
     def get_y_values(self, eval, x):
+        """Get a points of the type (x, y) from the evaluator and given list of x's
+
+        Args:
+            eval (function): The evaluator of the x'x
+            x (list): list of integers of domain
+
+        Returns:
+            list: List of points of the type (x, y)
+        """
+
         result = []
         for i in x:
             try:
@@ -105,6 +150,16 @@ class PointFromFunction(Point):
         return result
 
     def expand_domain(self, domain):
+        """From the given endpoints of domain return the list of 
+        values of the domain within a distance of 0.01
+
+        Args:
+            domain (list): [a, b]
+
+        Returns:
+            list: list of values from domain
+        """
+
         x = [] 
         low = domain[0]
         high = domain[1] 
