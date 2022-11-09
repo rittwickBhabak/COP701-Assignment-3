@@ -170,7 +170,6 @@ class PointFromFunction(Point):
 
 
 
-
 class Plot(Frame):
     """This the Plot class used to plot the list of points (x, y) 
     on the screen with the specified widht and height.
@@ -185,7 +184,7 @@ class Plot(Frame):
             master (Tk, optional): The parent object of the graph canvas. Defaults to None.
             cnf (dict, optional): The configuration options of the canvas. Defaults to {}.
         """
-        
+
         Frame.__init__(self, master, cnf, **kw)
         cnf = _cnfmerge((cnf, kw))
         self.height=cnf.get('height')
@@ -195,6 +194,12 @@ class Plot(Frame):
         self.canvas.pack()
 
     def draw(self, arg):
+        """Draws the points on a canvas
+
+        Args:
+            arg (dict): the set of options which is useful for plotting the points.
+        """
+
         domain = arg.get('domain', None)
         fn = arg.get('fn', None)
         ty = arg.get('type')
