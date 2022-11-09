@@ -26,12 +26,34 @@ class Point():
         self.domain = domain
 
     def set_points(self, domain, co_domain):
+        """Generate the points and associate them to the class.
+
+        Generates list of points of the form (x, y) which will
+        be drawn on the canvas.
+
+        Args:
+            domain (list): list of integers
+            co_domain (list): list of integers
+        """
+
         self.result = zip(domain, co_domain)
         self.points = []
         for _, (x, y) in enumerate(self.result):
             self.points.append((x, self.height - y))
 
     def get_scaled_values(self, l, max_value):
+        """Apply scaling to all of the points (x, y) such that 
+        the fit into the specified rectangel of the specified height
+        and width.
+
+        Args:
+            l (list): list of integers
+            max_value (int): The maximum value of the list l
+
+        Returns:
+            list: list of integers after applying scaling 
+        """
+
         try:
             scale = max_value / (max(l) - min(l))
         except:
@@ -41,6 +63,15 @@ class Point():
 
 
 class PointFromList(Point):
+    """Generate points from a given list of points.
+
+    Basically scale the list of points such that all of them fits 
+    into the rectangle of specified width and height. This class
+    is inherited from Point class. So for more details view
+    the Point class.
+
+    """
+
     def __init__(self, height, width, data):
         super().__init__(height, width)
         domain = list(map(lambda x: x[0], data))    
