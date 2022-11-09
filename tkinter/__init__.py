@@ -3130,12 +3130,15 @@ class Text(Widget, XView, YView):
         that any possible out of date information is recalculated."""
         args = ['-%s' % arg for arg in args if not arg.startswith('-')]
         args += [index1, index2]
+        ############################### our edit #####################################
         try:
             if index1==index2:
                 return 0
         except Exception as e:
             # print(str(e))
             pass 
+        ##############################################################################
+
         res = self.tk.call(self._w, 'count', *args) or None
         if res is not None and len(args) <= 3:
             return (res, )
@@ -3620,7 +3623,16 @@ class PhotoImage(Image):
         self.tk.call(args)
 
 class GifImage(Frame):
+    """Widget which can show image in moving GIF format"""
+
     def __init__(self,  master, image_path, **options):
+        """Consturctor of the GifImage Wdiget
+
+        Args:
+            master (Tk Object): The parent object of the GifImage
+            image_path (str): Absolute path of the GIF image
+        """
+
         Frame.__init__(self, master, **options)
         self.image_path = image_path
         self.master = master
@@ -3651,6 +3663,9 @@ class GifImage(Frame):
         return super().destroy()
     
     def show(self):
+        """By invoking this function shows the image.
+        """
+
         self.stop_threads = False 
         thread = threading.Thread(target=self.run_gif)
         thread.start()
