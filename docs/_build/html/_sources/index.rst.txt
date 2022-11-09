@@ -1,10 +1,10 @@
-.. sdlfkjasf documentation master file, created by
-   sphinx-quickstart on Thu Nov 10 04:17:09 2022.
+.. Modified Tkinter documentation master file, created by
+   sphinx-quickstart on Thu Nov 10 04:39:40 2022.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to sdlfkjasf's documentation!
-=====================================
+Welcome to Modified Tkinter's documentation!
+============================================
 
 .. toctree::
    :maxdepth: 2

@@ -1,14 +1,6 @@
 tkinter package
 ===============
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   tkinter.test
-
 Submodules
 ----------
 
