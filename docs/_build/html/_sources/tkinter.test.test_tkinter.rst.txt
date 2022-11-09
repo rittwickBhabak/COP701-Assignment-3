@@ -1,0 +1,77 @@
+tkinter.test.test\_tkinter package
+==================================
+
+Submodules
+----------
+
+tkinter.test.test\_tkinter.test\_font module
+--------------------------------------------
+
+.. automodule:: tkinter.test.test_tkinter.test_font
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tkinter.test.test\_tkinter.test\_geometry\_managers module
+----------------------------------------------------------
+
+.. automodule:: tkinter.test.test_tkinter.test_geometry_managers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tkinter.test.test\_tkinter.test\_images module
+----------------------------------------------
+
+.. automodule:: tkinter.test.test_tkinter.test_images
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tkinter.test.test\_tkinter.test\_loadtk module
+----------------------------------------------
+
+.. automodule:: tkinter.test.test_tkinter.test_loadtk
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tkinter.test.test\_tkinter.test\_misc module
+--------------------------------------------
+
+.. automodule:: tkinter.test.test_tkinter.test_misc
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tkinter.test.test\_tkinter.test\_text module
+--------------------------------------------
+
+.. automodule:: tkinter.test.test_tkinter.test_text
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tkinter.test.test\_tkinter.test\_variables module
+-------------------------------------------------
+
+.. automodule:: tkinter.test.test_tkinter.test_variables
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tkinter.test.test\_tkinter.test\_widgets module
+-----------------------------------------------
+
+.. automodule:: tkinter.test.test_tkinter.test_widgets
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: tkinter.test.test_tkinter
+   :members:
+   :undoc-members:
+   :show-inheritance:
