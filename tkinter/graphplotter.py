@@ -3,7 +3,23 @@ from tkinter import _cnfmerge
 
 
 class Point():
+    """Generate list of points that will be plotted.
+
+    This class will scale up/down the points to be ploted on the 
+    screen such that all of the points withing the range must be 
+    fitted into the rectangle of specified width and height.
+    """
+
     def __init__(self, height, width, eval=None, domain=None):
+        """Constructor of the Point class.
+
+        Args:
+            height (int): Height of the rectangle
+            width (int): Width of the rectangle
+            eval (fucntion, optional): The function using which the points will be plotted. Defaults to None.
+            domain (list, optional): Domain of the function. Defaults to None.
+        """
+        
         self.height = height 
         self.width = width 
         self.eval = eval 
