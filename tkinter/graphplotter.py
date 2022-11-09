@@ -61,7 +61,6 @@ class Point():
         shift = min(l)
         return list(map(lambda x: (x-shift)*scale, l))
 
-
 class PointFromList(Point):
     """Generate points from a given list of points.
 
@@ -173,7 +172,20 @@ class PointFromFunction(Point):
 
 
 class Plot(Frame):
+    """This the Plot class used to plot the list of points (x, y) 
+    on the screen with the specified widht and height.
+
+    """
+
     def __init__(self, master=None, cnf={}, **kw):
+        """Constructor of the Plot class which is used to plot graph of either 
+        functions or lists.
+
+        Args:
+            master (Tk, optional): The parent object of the graph canvas. Defaults to None.
+            cnf (dict, optional): The configuration options of the canvas. Defaults to {}.
+        """
+        
         Frame.__init__(self, master, cnf, **kw)
         cnf = _cnfmerge((cnf, kw))
         self.height=cnf.get('height')
