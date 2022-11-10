@@ -3519,9 +3519,9 @@ class Image:
             if callable(v):
                 v = self._register(v)
             options = options + ('-'+k, v)
-        input('Image created before')
+        # input('Image created before')
         self.tk.call(('image', 'create', imgtype, name,) + options)
-        print('Image created after')
+        # print('Image created after')
         self.name = name
     def __str__(self): return self.name
     def __del__(self):
