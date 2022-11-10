@@ -66,7 +66,35 @@ class TestPointFromList(unittest.TestCase):
         exptected = [(0.0, 189.47368421052633),(250.0, 200.0),(200.0, 185.26315789473685),(800.0, 164.21052631578948),(700.0, 0.0),(1000.0, 0.0)]
         self.assertEqual(self.points.points, exptected)
 
+class TestPointFromFunction(unittest.TestCase):
 
+    def setUp(self):
+        self.height = 200
+        self.width = 1000
+        self.domain = [-10, 10]
+        self.eval = lambda x: x*x + (1 / x)
+        self.points = PointFromFunction(self.height, self.width, self.eval, self.domain)
+
+    # def test_constructor(self):
+    #     x = [] 
+    #     low = self.domain[0]
+    #     high = self.domain[1] 
+    #     diff = 0.01
+    #     while low<=high:
+    #         x.append(low)
+    #         low = low + diff 
+
+    #     y = [self.eval(i) for i in x]
+    #     self.domain = self.points.get_scaled_values(x, self.width)
+    #     self.co_domain = self.points.get_scaled_values(y, self.height)
+    #     expected = list(zip(self.domain, self.co_domain))
+        
+    #     self.assertEqual(self.points.points, expected)
+        
+    def test_get_y_values(self):
+        expected = [self.eval(i) for i in self.domain]
+        
+        self.assertNotEqual(self.points.get_y_values(self.eval, self.domain), expected)
 
 if __name__=='__main__':
     unittest.main()
